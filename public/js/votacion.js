@@ -157,7 +157,7 @@ function renderDashboard(data) {
   const { options, userVotesCount, hasProposedOption, userProposalsCount } = data;
 
   const isAdmin = currentUser && currentUser.name.toLowerCase() === 'adminvotacion';
-
+ 
   // Renderizar límites y contadores superiores
   document.getElementById('voted-count').textContent = userVotesCount;
   
