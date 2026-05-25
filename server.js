@@ -301,6 +301,132 @@ app.post('/api/comments', authenticateUser, async (req, res) => {
   }
 });
 
+// --- RUTAS DE ADMINISTRACIÓN GLOBAL DE BASE DE DATOS (CRUD) ---
+
+// Middleware de verificación de rol administrador
+function requireAdmin(req, res, next) {
+  const userName = req.headers['x-user-name'];
+  if (!userName || userName.toLowerCase() !== 'adminvotacion') {
+    return res.status(403).json({ error: 'Acceso prohibido. Se requieren privilegios de administrador.' });
+  }
+  next();
+}
+
+const allowedTables = ['users', 'product_options', 'votes', 'comments'];
+
+// A1. GET /api/adminvotos/tables/:table - Obtener todos los registros de una tabla
+app.get('/api/adminvotos/tables/:table', authenticateUser, requireAdmin, async (req, res) => {
+  const { table } = req.params;
+
+  if (!allowedTables.includes(table)) {
+    return res.status(400).json({ error: 'Tabla no válida.' });
+  }
+
+  try {
+    const rows = await query.all(`SELECT * FROM ${table} ORDER BY id DESC`);
+    res.json(rows);
+  } catch (err) {
+    console.error(`Error al leer tabla ${table}:`, err);
+    res.status(500).json({ error: 'Error al consultar la base de datos.' });
+  }
+});
+
+// A2. POST /api/adminvotos/tables/:table - Crear un nuevo registro
+app.post('/api/adminvotos/tables/:table', authenticateUser, requireAdmin, async (req, res) => {
+  const { table } = req.params;
+
+  if (!allowedTables.includes(table)) {
+    return res.status(400).json({ error: 'Tabla no válida.' });
+  }
+
+  // Prevenir campos no deseados o nulos en campos requeridos
+  const payload = req.body;
+  if (!payload || Object.keys(payload).length === 0) {
+    return res.status(400).json({ error: 'El cuerpo de la petición no puede estar vacío.' });
+  }
+
+  try {
+    const keys = Object.keys(payload);
+    const values = Object.values(payload);
+    const placeholders = keys.map(() => '?').join(',');
+
+    const sql = `INSERT INTO ${table} (${keys.join(',')}) VALUES (${placeholders})`;
+    const result = await query.run(sql, values);
+
+    res.status(201).json({ message: 'Registro creado con éxito.', id: result.lastID });
+  } catch (err) {
+    console.error(`Error al insertar en tabla ${table}:`, err);
+    res.status(500).json({ error: `Error de base de datos: ${err.message}` });
+  }
+});
+
+// A3. PUT /api/adminvotos/tables/:table/:id - Actualizar un registro por su ID
+app.put('/api/adminvotos/tables/:table/:id', authenticateUser, requireAdmin, async (req, res) => {
+  const { table, id } = req.params;
+  const payload = req.body;
+
+  if (!allowedTables.includes(table)) {
+    return res.status(400).json({ error: 'Tabla no válida.' });
+  }
+  if (!payload || Object.keys(payload).length === 0) {
+    return res.status(400).json({ error: 'El cuerpo de la petición no puede estar vacío.' });
+  }
+
+  try {
+    // Eliminar claves que no se deben actualizar manualmente
+    delete payload.id;
+    delete payload.created_at;
+
+    const keys = Object.keys(payload);
+    const values = Object.values(payload);
+
+    if (keys.length === 0) {
+      return res.status(400).json({ error: 'No hay campos válidos para actualizar.' });
+    }
+
+    const setClause = keys.map(k => `${k} = ?`).join(',');
+    const sql = `UPDATE ${table} SET ${setClause} WHERE id = ?`;
+
+    const result = await query.run(sql, [...values, id]);
+
+    if (result.changes === 0) {
+      return res.status(404).json({ error: 'El registro especificado no existe.' });
+    }
+
+    res.json({ message: 'Registro actualizado con éxito.' });
+  } catch (err) {
+    console.error(`Error al actualizar en tabla ${table}:`, err);
+    res.status(500).json({ error: `Error de base de datos: ${err.message}` });
+  }
+});
+
+// A4. DELETE /api/adminvotos/tables/:table/:id - Eliminar un registro por su ID
+app.delete('/api/adminvotos/tables/:table/:id', authenticateUser, requireAdmin, async (req, res) => {
+  const { table, id } = req.params;
+
+  if (!allowedTables.includes(table)) {
+    return res.status(400).json({ error: 'Tabla no válida.' });
+  }
+
+  try {
+    const result = await query.run(`DELETE FROM ${table} WHERE id = ?`, [id]);
+
+    if (result.changes === 0) {
+      return res.status(404).json({ error: 'El registro especificado no existe.' });
+    }
+
+    res.json({ message: 'Registro eliminado con éxito.' });
+  } catch (err) {
+    console.error(`Error al eliminar en tabla ${table}:`, err);
+    res.status(500).json({ error: `Error de base de datos: ${err.message}` });
+  }
+});
+
+// Servir la página física /adminvotos
+app.get('/adminvotos', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'adminvotos.html'));
+});
+
 // Servir páginas específicas para las URLs requeridas
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));

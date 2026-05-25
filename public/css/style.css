@@ -1225,3 +1225,262 @@ label {
 .dropdown-item.active svg {
   color: var(--primary);
 }
+
+/* --- ESTILOS CRUD ADMINISTRATIVO (/adminvotos) --- */
+
+.admin-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1.5px solid var(--border-color);
+  margin-bottom: 24px;
+  padding-bottom: 4px;
+  overflow-x: auto;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 12px 20px;
+  font-family: var(--font-family);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  background-color: var(--light-bg);
+  color: var(--text-main);
+}
+
+.tab-btn.active {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.tab-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  background-color: var(--border-color);
+  color: var(--text-muted);
+  padding: 2px 8px;
+  border-radius: 12px;
+  transition: var(--transition);
+}
+
+.tab-btn.active .tab-badge {
+  background-color: var(--primary);
+  color: #ffffff;
+}
+
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.toolbar-left h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.toolbar-left p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  background-color: #ffffff;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.925rem;
+}
+
+.admin-table th {
+  background-color: var(--light-bg);
+  color: var(--text-main);
+  font-weight: 700;
+  padding: 14px 18px;
+  border-bottom: 1.5px solid var(--border-color);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.admin-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-color);
+  color: #374151;
+  word-break: break-word;
+}
+
+.admin-table tr:hover td {
+  background-color: rgba(0, 0, 255, 0.015);
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Acciones en Tabla */
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.btn-row-action {
+  background: none;
+  border: 1.5px solid var(--border-color);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  color: var(--text-muted);
+}
+
+.btn-row-action:hover {
+  border-color: var(--text-main);
+  color: var(--text-main);
+  background-color: var(--light-bg);
+  transform: scale(1.05);
+}
+
+.btn-row-action.delete:hover {
+  border-color: var(--error);
+  color: var(--error);
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+/* --- ESTILOS DE MODALES --- */
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(9, 9, 11, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal.open {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  width: 90%;
+  max-width: 480px;
+  padding: 32px;
+  box-shadow: var(--shadow-lg);
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  border-bottom: 1.5px solid var(--border-color);
+  padding-bottom: 16px;
+}
+
+.modal-header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.btn-close-modal {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+.btn-close-modal:hover {
+  color: var(--text-main);
+  background-color: var(--light-bg);
+}
+
+.modal-form .form-group {
+  margin-bottom: 18px;
+}
+
+.modal-form select {
+  font-family: var(--font-family);
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  color: var(--text-main);
+  background-color: #ffffff;
+  transition: var(--transition);
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 16px;
+}
+
+.modal-form select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(0, 0, 255, 0.1);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 28px;
+  border-top: 1.5px solid var(--border-color);
+  padding-top: 20px;
+}
+
