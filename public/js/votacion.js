@@ -165,7 +165,7 @@ function renderDashboard(data) {
   if (isAdmin) {
     proposedCountEl.parentElement.innerHTML = `<strong id="proposed-count">${userProposalsCount || 0}</strong> / ∞`;
   } else {
-    proposedCountEl.parentElement.innerHTML = `<strong id="proposed-count">${hasProposedOption ? '1' : '0'}</strong> / 1`;
+    proposedCountEl.parentElement.innerHTML = `<strong id="proposed-count">${userProposalsCount || 0}</strong> / 2`;
   }
 
   const dotsContainer = document.getElementById('vote-dots-container');
