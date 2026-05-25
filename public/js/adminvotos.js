@@ -45,6 +45,7 @@ const tableMetadata = {
     columns: [
       { key: 'id', label: 'ID', readonly: true },
       { key: 'name', label: 'Nombre', type: 'text', required: true },
+      { key: 'email', label: 'Email', type: 'text', required: true },
       { key: 'created_at', label: 'Fecha de Registro', readonly: true }
     ]
   },

@@ -46,16 +46,20 @@ initDatabase()
 
 // 1. POST /api/auth - Login / Acceso
 app.post('/api/auth', async (req, res) => {
-  const { name, accessCode } = req.body;
+  const { name, email, accessCode } = req.body;
 
   if (!name || !name.trim()) {
     return res.status(400).json({ error: 'El nombre es obligatorio.' });
+  }
+  if (!email || !email.trim()) {
+    return res.status(400).json({ error: 'El email es obligatorio.' });
   }
   if (!accessCode || !accessCode.trim()) {
     return res.status(400).json({ error: 'El código de acceso es obligatorio.' });
   }
 
   const trimmedName = name.trim();
+  const trimmedEmail = email.trim();
   const trimmedCode = accessCode.trim();
 
   // Validación del código de acceso (insensible a mayúsculas/minúsculas)
@@ -64,16 +68,19 @@ app.post('/api/auth', async (req, res) => {
   }
 
   try {
-    // Buscar si el usuario ya existe (insensible a mayúsculas/minúsculas)
-    let user = await query.get('SELECT * FROM users WHERE LOWER(name) = LOWER(?)', [trimmedName]);
+    // Buscar si el usuario ya existe por su email (insensible a mayúsculas/minúsculas)
+    let user = await query.get('SELECT * FROM users WHERE LOWER(email) = LOWER(?)', [trimmedEmail]);
 
     if (!user) {
       // Registrar nuevo usuario
-      const result = await query.run('INSERT INTO users (name) VALUES (?)', [trimmedName]);
-      user = { id: result.lastID, name: trimmedName };
-      console.log(`Nuevo usuario registrado: ${trimmedName} (ID: ${user.id})`);
+      const result = await query.run('INSERT INTO users (email, name) VALUES (?, ?)', [trimmedEmail, trimmedName]);
+      user = { id: result.lastID, email: trimmedEmail, name: trimmedName };
+      console.log(`Nuevo usuario registrado: ${trimmedName} (${trimmedEmail}) (ID: ${user.id})`);
     } else {
-      console.log(`Usuario existente accedió: ${user.name} (ID: ${user.id})`);
+      // Si el usuario ya existe, actualizamos su nombre por si ha cambiado
+      await query.run('UPDATE users SET name = ? WHERE id = ?', [trimmedName, user.id]);
+      user.name = trimmedName;
+      console.log(`Usuario existente accedió: ${user.name} (${user.email}) (ID: ${user.id})`);
     }
 
     res.json({ user });

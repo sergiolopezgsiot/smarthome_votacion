@@ -16,7 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginForm = document.getElementById('login-form');
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const username = document.getElementById('username').value;
+    const name = document.getElementById('login-name').value;
+    const email = document.getElementById('login-email').value;
     const accessCode = document.getElementById('access-code').value;
     const loginError = document.getElementById('login-error');
     const loginErrorText = document.getElementById('login-error-text');
@@ -27,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await fetch('/api/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: username, accessCode })
+        body: JSON.stringify({ name, email, accessCode })
       });
 
       const data = await response.json();

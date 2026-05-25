@@ -42,14 +42,58 @@ const query = {
 };
 
 async function initDatabase() {
-  // Crear tabla de usuarios
+  // Crear tabla de usuarios con soporte para email y nombre
   await query.run(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL UNIQUE,
+      email TEXT NOT NULL UNIQUE,
+      name TEXT NOT NULL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
+
+  // Migración para bases de datos existentes que no tienen la columna 'email'
+  try {
+    const tableInfo = await query.all("PRAGMA table_info(users)");
+    const hasEmail = tableInfo.some(col => col.name === 'email');
+    if (!hasEmail) {
+      console.log('Iniciando migración de la tabla "users" para soportar email...');
+      
+      // Desactivar temporalmente las claves foráneas para la migración
+      await query.run('PRAGMA foreign_keys = OFF');
+      
+      // 1. Renombrar tabla vieja
+      await query.run('ALTER TABLE users RENAME TO users_old');
+      
+      // 2. Crear tabla nueva con la estructura correcta (email único, name normal)
+      await query.run(`
+        CREATE TABLE users (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          email TEXT NOT NULL UNIQUE,
+          name TEXT NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+      
+      // 3. Copiar datos anteriores, rellenando el email con el name anterior si estuviera vacío
+      await query.run(`
+        INSERT INTO users (id, email, name, created_at)
+        SELECT id, name, name, created_at FROM users_old
+      `);
+      
+      // 4. Eliminar tabla vieja
+      await query.run('DROP TABLE users_old');
+      
+      // Re-activar las claves foráneas
+      await query.run('PRAGMA foreign_keys = ON');
+      
+      console.log('Migración completada con éxito. Tabla "users" actualizada.');
+    }
+  } catch (err) {
+    // Asegurarse de re-activar las claves foráneas por si acaso
+    await query.run('PRAGMA foreign_keys = ON');
+    console.error('Error al realizar la migración de la tabla users:', err);
+  }
 
   // Crear tabla de opciones de nombres de productos
   await query.run(`
