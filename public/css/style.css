@@ -378,11 +378,11 @@ label {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--primary);
+ 
   color: #ffffff;
   width: 32px;
   height: 32px;
-  border-radius: var(--radius-sm);
+  
 }
 
 .brand-title {
@@ -768,6 +768,27 @@ label {
   border-color: var(--border-color);
   color: #a1a1aa;
   cursor: not-allowed;
+}
+
+.btn-delete {
+  font-size: 0.85rem;
+  padding: 8px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border-color);
+  background-color: #ffffff;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete:hover {
+  border-color: var(--error);
+  color: var(--error);
+  background-color: rgba(239, 68, 68, 0.05);
+  transform: scale(1.05);
 }
 
 .option-desc {

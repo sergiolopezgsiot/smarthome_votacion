@@ -154,11 +154,19 @@ async function loadDashboard() {
 }
 
 function renderDashboard(data) {
-  const { options, userVotesCount, hasProposedOption } = data;
+  const { options, userVotesCount, hasProposedOption, userProposalsCount } = data;
+
+  const isAdmin = currentUser && currentUser.name.toLowerCase() === 'adminvotacion';
 
   // Renderizar límites y contadores superiores
   document.getElementById('voted-count').textContent = userVotesCount;
-  document.getElementById('proposed-count').textContent = hasProposedOption ? '1' : '0';
+  
+  const proposedCountEl = document.getElementById('proposed-count');
+  if (isAdmin) {
+    proposedCountEl.parentElement.innerHTML = `<strong id="proposed-count">${userProposalsCount || 0}</strong> / ∞`;
+  } else {
+    proposedCountEl.parentElement.innerHTML = `<strong id="proposed-count">${hasProposedOption ? '1' : '0'}</strong> / 1`;
+  }
 
   const dotsContainer = document.getElementById('vote-dots-container');
   dotsContainer.innerHTML = '';
@@ -169,7 +177,11 @@ function renderDashboard(data) {
   }
 
   const badgeContainer = document.getElementById('proposal-status-badge');
-  if (hasProposedOption) {
+  if (isAdmin) {
+    badgeContainer.innerHTML = `<span class="badge status-done">Administrador</span>`;
+    document.getElementById('proposal-section').classList.remove('hidden');
+    document.getElementById('proposal-success-banner').classList.add('hidden');
+  } else if (hasProposedOption) {
     badgeContainer.innerHTML = `<span class="badge status-done">Propuesta enviada</span>`;
     document.getElementById('proposal-section').classList.add('hidden');
     document.getElementById('proposal-success-banner').classList.remove('hidden');
@@ -217,6 +229,15 @@ function createOptionCard(opt, userVotesCount) {
     ? `Añadido por <strong>${escapeHTML(opt.creator_name)}</strong>` 
     : `Sugerencia <strong>Original</strong>`;
 
+  const isAdmin = currentUser && currentUser.name.toLowerCase() === 'adminvotacion';
+  const deleteButtonHTML = isAdmin 
+    ? `
+        <button class="btn-delete" title="Eliminar opción" onclick="deleteOption(${opt.id}, '${escapeHTML(opt.name)}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+        </button>
+      `
+    : '';
+
   card.innerHTML = `
     <div class="option-header">
       <div class="option-title-group">
@@ -238,6 +259,7 @@ function createOptionCard(opt, userVotesCount) {
             : 'Votar'
           }
         </button>
+        ${deleteButtonHTML}
       </div>
     </div>
     
@@ -423,3 +445,28 @@ function formatRelativeTime(dateString) {
     return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
   }
 }
+
+async function deleteOption(optionId, optionName) {
+  if (!confirm(`¿Estás seguro de que deseas eliminar la propuesta "${optionName}"? Esta acción borrará de forma permanente todos sus votos y comentarios.`)) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/options/${optionId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.error || 'Error al eliminar la opción.');
+      return;
+    }
+
+    await loadDashboard();
+  } catch (err) {
+    console.error('Error al eliminar opción:', err);
+  }
+}
+

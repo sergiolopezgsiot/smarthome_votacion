@@ -126,7 +126,8 @@ app.get('/api/dashboard', authenticateUser, async (req, res) => {
     res.json({
       options,
       userVotesCount: userVotes.count,
-      hasProposedOption: userProposals.count > 0,
+      hasProposedOption: userProposals.count >= 2,
+      userProposalsCount: userProposals.count,
       user: req.user
     });
   } catch (err) {
@@ -147,10 +148,12 @@ app.post('/api/options', authenticateUser, async (req, res) => {
   const trimmedName = name.trim();
 
   try {
-    // Validar si el usuario ya propuso una opción
-    const proposalCheck = await query.get('SELECT COUNT(*) AS count FROM product_options WHERE created_by_user_id = ?', [userId]);
-    if (proposalCheck.count >= 1) {
-      return res.status(400).json({ error: 'Ya has añadido tu opción permitida (máximo 1 opción por persona).' });
+    // Validar si el usuario ya propuso una opción (excepto para adminvotacion, que no tiene límites)
+    if (req.user.name.toLowerCase() !== 'adminvotacion') {
+      const proposalCheck = await query.get('SELECT COUNT(*) AS count FROM product_options WHERE created_by_user_id = ?', [userId]);
+      if (proposalCheck.count >= 2) {
+        return res.status(400).json({ error: 'Ya has alcanzado el límite máximo de 2 propuestas por persona.' });
+      }
     }
 
     // Validar si el nombre propuesto ya existe (insensible a mayúsculas/minúsculas)
@@ -172,6 +175,34 @@ app.post('/api/options', authenticateUser, async (req, res) => {
     res.status(500).json({ error: 'Error al registrar la propuesta.' });
   }
 });
+
+// 3b. DELETE /api/options/:id - Eliminar una opción (solo accesible por adminvotacion)
+app.delete('/api/options/:id', authenticateUser, async (req, res) => {
+  const optionId = req.params.id;
+  const userName = req.user.name;
+
+  if (userName.toLowerCase() !== 'adminvotacion') {
+    return res.status(403).json({ error: 'Solo el usuario adminvotacion puede eliminar opciones de producto.' });
+  }
+
+  try {
+    // Verificar si la opción existe
+    const option = await query.get('SELECT * FROM product_options WHERE id = ?', [optionId]);
+    if (!option) {
+      return res.status(404).json({ error: 'La opción de producto especificada no existe.' });
+    }
+
+    // Eliminar la opción (debido a ON DELETE CASCADE, también elimina votos y comentarios)
+    await query.run('DELETE FROM product_options WHERE id = ?', [optionId]);
+    console.log(`Usuario administrador eliminó la opción ID ${optionId} ("${option.name}")`);
+
+    res.json({ message: 'Opción eliminada con éxito.' });
+  } catch (err) {
+    console.error('Error al eliminar opción:', err);
+    res.status(500).json({ error: 'Error al procesar la eliminación de la opción.' });
+  }
+});
+
 
 // 4. POST /api/votes - Votar por una opción
 app.post('/api/votes', authenticateUser, async (req, res) => {
