@@ -142,7 +142,7 @@ label {
   align-items: center;
   justify-content: center;
   position: relative;
-  padding: 20px;
+  padding: 5px;
   overflow: hidden;
 }
 
@@ -249,7 +249,7 @@ label {
   background: var(--light-card);
   border: 1.5px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 48px;
+  padding: 20px;
   box-shadow: var(--shadow-lg);
 }
 
