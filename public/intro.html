@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instrucciones | Encuesta de Nombres de Producto</title>
+  <!-- Google Font: Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- PANTALLA: INTRODUCCIÓN PREVIA (MECÁNICA) -->
+  <div id="intro-screen" class="screen active">
+    <div class="glow-bg"></div>
+    <div class="intro-card">
+      <div class="intro-header">
+        <span class="badge-tag">Mecánica de Votación</span>
+        <h2>¿Cómo funciona esta decisión?</h2>
+        <p>Queremos encontrar la identidad perfecta para nuestro nuevo producto de forma democrática y colaborativa. Por favor, lee las pautas antes de empezar:</p>
+      </div>
+
+      <div class="rules-grid">
+        <div class="rule-item">
+          <div class="rule-num">3</div>
+          <div class="rule-info">
+            <h3>Votos Máximos</h3>
+            <p>Puedes votar por hasta <strong>3 nombres distintos</strong>. Tienes total flexibilidad de cambiar o retirar tus votos en cualquier momento si cambias de opinión.</p>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">1</div>
+          <div class="rule-info">
+            <h3>Sugerencia Única</h3>
+            <p>¿Tienes una gran idea que no está en la lista? Puedes <strong>añadir 1 propuesta de nombre</strong> para que todo el equipo la vote.</p>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-num">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div class="rule-info">
+            <h3>Debate y Comentarios</h3>
+            <p>Cada propuesta tiene su propia sección de comentarios. <strong>Escribe tus pros, contras o sugerencias</strong> de variación para enriquecer el debate.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="intro-actions">
+        <button id="skip-intro-btn" class="btn btn-secondary">Saltar</button>
+        <button id="start-voting-btn" class="btn btn-primary">
+          <span>Comenzar</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/intro.js"></script>
+</body>
+</html>

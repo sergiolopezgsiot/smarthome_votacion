@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Encuesta de Nombres de Producto</title>
+  <!-- Google Font: Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- PANTALLA: DASHBOARD PRINCIPAL -->
+  <div id="dashboard-screen" class="screen active">
+    <!-- Navegación -->
+    <header class="app-header">
+      <div class="header-container">
+        <div class="brand">
+          <div class="brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <span class="brand-title">Product Naming Survey</span>
+        </div>
+        
+        <div class="user-status-bar" style="position: relative;">
+          <div class="user-info">
+            <span class="user-avatar" id="avatar-char">U</span>
+            <div class="user-details">
+              <span class="user-name" id="display-username">Nombre de Usuario</span>
+              <span class="user-role">Equipo de Producto</span>
+            </div>
+          </div>
+          
+          <!-- Botón de Menú Hamburguesa -->
+          <button id="menu-toggle-btn" class="btn-menu-toggle" aria-label="Abrir menú">
+            <svg class="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          
+          <!-- Menú Desplegable Hamburguesa -->
+          <nav id="hamburger-dropdown" class="hamburger-dropdown">
+            <ul>
+              <li>
+                <a href="#" class="dropdown-item active" data-target="votar">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Votar</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="dropdown-item" data-target="tus-votos">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <span>Tus votos</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="dropdown-item" data-target="proponer">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  <span>Proponer</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="dropdown-item" data-target="resultados">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                  <span>Resultados</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+          
+          <button id="logout-btn" class="btn-logout" title="Cerrar sesión">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="dashboard-main">
+      <div class="dashboard-container">
+        
+        <!-- Grid de dos columnas -->
+        <div class="layout-grid">
+          
+          <!-- Panel de Estadísticas del Usuario (Límites) -->
+          <section class="user-stats-card dashboard-panel" id="panel-tus-votos">
+            <div class="stat-box">
+              <div class="stat-header">
+                <h3>Tus Votos</h3>
+                <span class="stat-count"><strong id="voted-count">0</strong> / 3</span>
+              </div>
+              <div class="vote-dots" id="vote-dots-container">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+              </div>
+              <p class="stat-desc">Puedes elegir hasta 3 opciones y cambiarlas libremente.</p>
+            </div>
+            
+            <div class="divider-v"></div>
+            
+            <div class="stat-box">
+              <div class="stat-header">
+                <h3>Tus Propuestas</h3>
+                <span class="stat-count"><strong id="proposed-count">0</strong> / 1</span>
+              </div>
+              <div class="proposal-status" id="proposal-status-badge">
+                <span class="badge status-pending">Pendiente</span>
+              </div>
+              <p class="stat-desc">Añade una opción extra con la que te sientas identificado.</p>
+            </div>
+          </section>
+
+          <!-- Contenedor del Panel Proponer -->
+          <div class="dashboard-panel" id="panel-proponer" style="width: 100%; max-width: 760px;">
+            <!-- Sección: Proponer un Nombre (Condicional) -->
+            <section id="proposal-section" class="card" style="margin-bottom: 0;">
+              <div class="card-header">
+                <h2>Proponer una nueva alternativa</h2>
+                <p>Propón un nombre al equipo. Tienes un límite de una propuesta única por persona.</p>
+              </div>
+              
+              <form id="proposal-form" class="proposal-form">
+                <div class="form-group">
+                  <label for="proposal-name">Propuesta de Nombre *</label>
+                  <input type="text" id="proposal-name" placeholder="Ej. Aura, Zenith, Kora..." required autocomplete="off" maxlength="30">
+                </div>
+                
+                <div class="form-group">
+                  <label for="proposal-desc">Justificación / Significado (Opcional)</label>
+                  <textarea id="proposal-desc" placeholder="¿Por qué te gusta este nombre? ¿Qué representa o transmite para el producto?" rows="3" maxlength="250"></textarea>
+                </div>
+                
+                <div id="proposal-error" class="alert error hidden"></div>
+                
+                <button type="submit" class="btn btn-primary">
+                  <span>Enviar propuesta</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+              </form>
+            </section>
+
+            <!-- Banner: Propuesta ya enviada -->
+            <div id="proposal-success-banner" class="alert success-banner hidden" style="margin-bottom: 0;">
+              <div class="banner-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
+              </div>
+              <div class="banner-text">
+                <h3>¡Propuesta añadida con éxito!</h3>
+                <p>Ya has propuesto tu alternativa para la encuesta. ¡Gracias por participar!</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Listado de Opciones de Nombres -->
+          <section class="options-section dashboard-panel active-panel" id="panel-votar">
+            <div class="section-title">
+              <h2>Candidatos a Nombre de Producto</h2>
+              <span class="count-badge" id="options-total-badge">0 opciones</span>
+            </div>
+            
+            <div class="options-list" id="options-list-container">
+              <!-- Se poblará dinámicamente con JS -->
+              <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Cargando opciones...</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Columna Derecha: Estadísticas / Resultados en Tiempo Real -->
+          <section class="card results-card dashboard-panel" id="panel-resultados" style="width: 100%; max-width: 760px; margin-bottom: 0;">
+            <div class="card-header">
+              <div class="live-indicator">
+                <span class="pulse-dot"></span>
+                <span class="live-text">RESULTADOS EN TIEMPO REAL</span>
+              </div>
+              <h2>Clasificación y Tendencia</h2>
+              <p>Cómo se distribuyen los votos del equipo en este momento.</p>
+            </div>
+            
+            <div class="chart-container" id="chart-bars-container">
+              <!-- Se poblará dinámicamente -->
+              <div class="empty-chart">
+                <p>Inicia sesión o vota para ver las estadísticas.</p>
+              </div>
+            </div>
+            
+            <div class="chart-footer">
+              <p>La opción más votada se destaca en azul eléctrico. Los empates se ordenan alfabéticamente.</p>
+            </div>
+          </section>
+          
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/votacion.js"></script>
+</body>
+</html>
